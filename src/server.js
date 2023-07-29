@@ -1,7 +1,7 @@
 require('dotenv').config();
 
 const Hapi = require('@hapi/hapi');
-const albums = require('./api/music');
+const albums = require('./api/albums');
 const AlbumsService = require('./services/inMemory/AlbumsService');
 const AlbumsValidator = require('./validator/albums');
 

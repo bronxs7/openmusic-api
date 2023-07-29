@@ -1,6 +1,9 @@
+const ClientError = require('../../exceptions/ClientError');
+
 class AlbumsHandler {
-  constructor(service) {
+  constructor(service, validator) {
     this._service = service;
+    this._validator = validator;
 
     this.postAlbumHandler = this.postAlbumHandler.bind(this);
     this.getAlbumsHandler = this.getAlbumsHandler.bind(this);
@@ -11,15 +14,16 @@ class AlbumsHandler {
 
   postAlbumHandler(request, h) {
     try {
+      this._validator.validateAlbumPayload(request.payload);
       const { name, year } = request.payload;
 
-      const AlbumId = this._service.addAlbum({ name, year });
+      const albumId = this._service.addAlbum({ name, year });
 
       const response = h.response({
         status: 'success',
         message: 'Album berhasil ditambahkan',
         data: {
-          AlbumId,
+          albumId,
         },
       });
       response.code(201);
@@ -67,7 +71,7 @@ class AlbumsHandler {
   putAlbumByIdHandler(request, h) {
     try {
       const { id } = request.params;
-
+      this._validator.validateAlbumPayload(request.payload);
       this._service.editAlbumById(id, request.payload);
 
       return {
@@ -75,12 +79,14 @@ class AlbumsHandler {
         message: 'Album berhasil diperbarui',
       };
     } catch (error) {
-      const response = h.response({
-        status: 'fail',
-        message: error.message,
-      });
-      response.code(404);
-      return response;
+      if (error instanceof ClientError) {
+        const response = h.response({
+          status: 'fail',
+          message: error.message,
+        });
+        response.code(error.statusCode);
+        return response;
+      }
     }
   }
 

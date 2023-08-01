@@ -22,7 +22,6 @@ class SongsService {
     if (!isSucces) {
       throw new InvariantError('Lagu gagal ditambahkan');
     }
-
     return id;
   }
 

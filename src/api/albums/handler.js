@@ -37,6 +37,13 @@ class AlbumsHandler {
         response.code(error.statusCode);
         return response;
       }
+
+      const response = h.response({
+        status: 'error',
+        message: 'Album gagal ditambahkan, ada kendala pada server',
+      });
+      response.code(500);
+      return response;
     }
   }
 
@@ -69,6 +76,13 @@ class AlbumsHandler {
         response.code(error.statusCode);
         return response;
       }
+
+      const response = h.response({
+        status: 'error',
+        message: 'Album tidak ditemukan, ada kesalahan pada server',
+      });
+      response.code(500);
+      return response;
     }
   }
 
@@ -91,6 +105,13 @@ class AlbumsHandler {
         response.code(error.statusCode);
         return response;
       }
+
+      const response = h.response({
+        status: 'error',
+        message: 'Album gagal diperbarui, ada kesalahn pada server',
+      });
+      response.code(500);
+      return response;
     }
   }
 
@@ -112,6 +133,13 @@ class AlbumsHandler {
         response.code(error.statusCode);
         return response;
       }
+
+      const response = h.response({
+        status: 'error',
+        message: 'Album gagal dihapus. ada kendala pada server',
+      });
+      response.code(500);
+      return response;
     }
   }
 }

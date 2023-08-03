@@ -7,13 +7,13 @@ class SongsService {
     this._songs = [];
   }
 
-  addSong({ title, year, genre, performer, duration, albumId }) {
+  addSong({ title, year, performer, genre, duration, albumId }) {
     const id = nanoid(16);
     const createdAt = new Date().toISOString();
     const updatedAt = createdAt;
 
     const newSong = {
-      title, year, genre, performer, duration, albumId, createdAt, updatedAt,
+      id, title, year, performer, genre, duration, albumId, createdAt, updatedAt,
     };
 
     this._songs.push(newSong);
@@ -26,7 +26,26 @@ class SongsService {
   }
 
   getSongs() {
-    return this._songs;
+    /*const songsArray = this._songs.map(item => {
+      return {
+        ...item,
+        id: item.id,
+        title: item.title,
+        performer: item.performer
+      };
+    });*/
+    const songsArray = this._songs.map(item => {
+      const container = {};
+
+      container.id = item.id;
+      container.title = item.title;
+      container.performer = item.performer;
+
+      return container;
+    });
+    console.log(songsArray);
+    return songsArray;
+    //return this._songs.map((item) => [item.id, item.title, item.performer].join(' '));
   }
 
   getSongById(id) {

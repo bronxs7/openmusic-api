@@ -1,4 +1,4 @@
-const ClientError = require("../../exceptions/ClientError");
+const ClientError = require('../../exceptions/ClientError');
 
 class SongsHandler {
   constructor(service, validator) {
@@ -15,9 +15,9 @@ class SongsHandler {
   postSongHandler(request, h) {
     try {
       this._validator.validateSongPayload(request.payload);
-      const { title, year, genre, performer, duration, albumId } = request.payload;
+      const { title, year, performer, genre, duration, albumId } = request.payload;
 
-      const songId = this._service.addSong({ title, year, genre, performer, duration, albumId });
+      const songId = this._service.addSong({ title, year, performer, genre, duration, albumId });
 
       const response = h.response({
         status: 'success',
@@ -88,7 +88,7 @@ class SongsHandler {
 
   putSongByIdHandler(request, h) {
     try {
-      this._validator.validatorSongPayload(request.payload);
+      this._validator.validateSongPayload(request.payload);
       const { id } = request.params;
 
       this._service.editSongById(id, request.payload);
@@ -123,7 +123,7 @@ class SongsHandler {
 
       return {
         status: 'success',
-        messsage: 'Catatan berhasil dihapus',
+        message: 'Lagu berhasil dihapus',
       };
     } catch (error) {
       if (error instanceof ClientError) {

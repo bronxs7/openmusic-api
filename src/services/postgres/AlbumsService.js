@@ -43,7 +43,7 @@ class AlbumsService {
     const result = await this._pool.query(query);
 
     if (!result.rows.length) {
-      throw new NotFoundError('Album tidak ditemukan');
+      throw new NotFoundError('Gagal menampilkan album, Id tidak ditemukan');
     }
 
     return result.rows.map(mapDBToAlbumModel)[0];

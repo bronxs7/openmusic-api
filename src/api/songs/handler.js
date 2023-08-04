@@ -47,14 +47,46 @@ class SongsHandler {
     }
   }
 
-  async getSongsHandler() {
-    const songs = await this._service.getSongs();
-    return {
-      status: 'success',
-      data: {
-        songs,
-      },
-    };
+  async getSongsHandler(request, h) {
+    try {
+      if (!(request.query.title || request.query.performer)) {
+        const songs = await this._service.getSongs();
+        console.log('no query params');
+        return {
+          status: 'success',
+          data: {
+            songs,
+          },
+        };
+      }
+
+      const title = request.query.title;
+      const performer = request.query.performer;
+
+      const songs = await this._service.getSongsByQueryParam(title, performer);
+      return {
+        status: 'success',
+        data: {
+          songs,
+        },
+      };
+    } catch (error) {
+      if (error instanceof ClientError) {
+        const response = h.response({
+          status: 'fail',
+          message: error.message,
+        });
+        response.code(error.statusCode);
+        return response;
+      }
+    }
+
+    const response = h.response({
+      status: 'error',
+      message: 'Gagal menemukan lagu, ada kesalahan internal server',
+    });
+    response.code(500);
+    return response;
   }
 
   async getSongByIdHandler(request, h) {

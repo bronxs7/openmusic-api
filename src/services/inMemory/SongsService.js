@@ -26,14 +26,6 @@ class SongsService {
   }
 
   getSongs() {
-    /*const songsArray = this._songs.map(item => {
-      return {
-        ...item,
-        id: item.id,
-        title: item.title,
-        performer: item.performer
-      };
-    });*/
     const songsArray = this._songs.map(item => {
       const container = {};
 
@@ -43,9 +35,8 @@ class SongsService {
 
       return container;
     });
-    console.log(songsArray);
+
     return songsArray;
-    //return this._songs.map((item) => [item.id, item.title, item.performer].join(' '));
   }
 
   getSongById(id) {

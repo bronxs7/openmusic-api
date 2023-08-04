@@ -48,10 +48,10 @@ class SongsHandler {
   }
 
   async getSongsHandler(request, h) {
+    const { title, performer } = request.query;
     try {
-      if (!(request.query.title || request.query.performer)) {
+      if (!(title || performer)) {
         const songs = await this._service.getSongs();
-        console.log('no query params');
         return {
           status: 'success',
           data: {
@@ -59,9 +59,6 @@ class SongsHandler {
           },
         };
       }
-
-      const title = request.query.title;
-      const performer = request.query.performer;
 
       const songs = await this._service.getSongsByQueryParam(title, performer);
       return {

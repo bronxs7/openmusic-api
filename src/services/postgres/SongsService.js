@@ -1,15 +1,17 @@
 const { Pool } = require('pg');
 const { nanoid } = require('nanoid');
-const InvariantError = require("../../exceptions/InvariantError");
-const NotFoundError = require('../../exceptions/NotFoundError');
 const { mapDBToSongModel, mapDBToSongsModel } = require('../../utils');
+const InvariantError = require('../../exceptions/InvariantError');
+const NotFoundError = require('../../exceptions/NotFoundError');
 
 class SongsService {
   constructor() {
     this._pool = new Pool();
   }
 
-  async addSong({ title, year, performer, genre, duration, albumId }) {
+  async addSong({
+    title, year, performer, genre, duration, albumId,
+  }) {
     const id = nanoid(16);
     const createdAt = new Date().toISOString();
     const updatedAt = createdAt;
@@ -53,21 +55,6 @@ class SongsService {
       text: `SELECT * FROM songs WHERE title ILIKE '%'||$1||'%' OR performer ILIKE '%'||$2||'%'`,
       values: [title, performer],
     };
-    const result = await this._pool.query(query);
-
-    if (!result.rows.length) {
-      throw new NotFoundError('Lagu tidak ditemukan');
-    }
-
-    return result.rows.map(mapDBToSongsModel);
-  }
-
-  async getSongByAlbumId(id) {
-    const query = {
-      text: 'SELECT * FROM songs WHERE album_id = $1',
-      values: [id],
-    };
-
     const result = await this._pool.query(query);
 
     if (!result.rows.length) {

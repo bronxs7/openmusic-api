@@ -1,17 +1,18 @@
 const autoBind = require('auto-bind');
 
 class AlbumsHandler {
-  constructor(service, validator) {
-    this._service = service;
-    this._validator = validator;
+  constructor(albumsService, songsService, validator) {
+    this.ALBUMSSERVICE = albumsService;
+    this.SONGSSERVICE = songsService;
+    this.VALIDATOR = validator;
 
     autoBind(this);
   }
 
   async postAlbumHandler(request, h) {
-    this._validator.validateAlbumPayload(request.payload);
+    this.VALIDATOR.validateAlbumPayload(request.payload);
     const { name, year } = request.payload;
-    const albumId = await this._service.addAlbum({ name, year });
+    const albumId = await this.ALBUMSSERVICE.addAlbum({ name, year });
 
     const response = h.response({
       status: 'success',
@@ -24,10 +25,10 @@ class AlbumsHandler {
     return response;
   }
 
-  async getAlbumByIdHandler(request, h) {
+  async getAlbumByIdHandler(request) {
     const { id } = request.params;
-    const album = await this._service.getAlbumById(id);
-    const songs = await this._service.getSongByAlbumId(id);
+    const album = await this.ALBUMSSERVICE.getAlbumById(id);
+    const songs = await this.SONGSSERVICE.getSongByAlbumId(id);
 
     return {
       status: 'success',
@@ -42,10 +43,10 @@ class AlbumsHandler {
     };
   }
 
-  async putAlbumByIdHandler(request, h) {
+  async putAlbumByIdHandler(request) {
     const { id } = request.params;
-    this._validator.validateAlbumPayload(request.payload);
-    await this._service.editAlbumById(id, request.payload);
+    this.VALIDATOR.validateAlbumPayload(request.payload);
+    await this.ALBUMSSERVICE.editAlbumById(id, request.payload);
 
     return {
       status: 'success',
@@ -53,9 +54,9 @@ class AlbumsHandler {
     };
   }
 
-  async deleteAlbumByIdHandler(request, h) {
+  async deleteAlbumByIdHandler(request) {
     const { id } = request.params;
-    await this._service.deleteAlbumById(id);
+    await this.ALBUMSSERVICE.deleteAlbumById(id);
 
     return {
       status: 'success',

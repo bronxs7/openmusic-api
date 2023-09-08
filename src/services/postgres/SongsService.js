@@ -117,6 +117,18 @@ class SongsService {
       throw new NotFoundError('Lagu gagal dihapus, Id lagu tidak ditemukan');
     }
   }
+
+  async verifySong(id) {
+    const query = {
+      text: 'SELECT * FROM songs WHERE id = $1',
+      values: [id],
+    };
+    const result = await this.POOL.query(query);
+
+    if (!result.rows.length) {
+      throw new NotFoundError('Lagu tidak ditemukan');
+    }
+  }
 }
 
 module.exports = SongsService;

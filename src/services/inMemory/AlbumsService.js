@@ -4,7 +4,7 @@ const NotFoundError = require('../../exceptions/NotFoundError');
 
 class AlbumsService {
   constructor() {
-    this._albums = [];
+    this.ALBUM = [];
   }
 
   addAlbum({ name, year }) {
@@ -16,9 +16,9 @@ class AlbumsService {
       name, year, id, createdAt, updatedAt,
     };
 
-    this._albums.push(newAlbum);
+    this.ALBUM.push(newAlbum);
 
-    const isSuccess = this._albums.filter((album) => album.id === id).length > 0;
+    const isSuccess = this.ALBUM.filter((album) => album.id === id).length > 0;
     if (!isSuccess) {
       throw new InvariantError('Album gagal ditambahkan');
     }
@@ -27,11 +27,11 @@ class AlbumsService {
   }
 
   getAlbums() {
-    return this._albums;
+    return this.ALBUM;
   }
 
   getAlbumById(id) {
-    const album = this._albums.filter((n) => n.id === id)[0];
+    const album = this.ALBUM.filter((n) => n.id === id)[0];
     if (!album) {
       throw new NotFoundError('Album tidak ditemukan');
     }
@@ -39,7 +39,7 @@ class AlbumsService {
   }
 
   editAlbumById(id, { name, year }) {
-    const index = this._albums.findIndex((album) => album.id === id);
+    const index = this.ALBUM.findIndex((album) => album.id === id);
 
     if (index === -1) {
       throw new NotFoundError('Gagal memperbarui album, Id tidak ditemukan');
@@ -47,8 +47,8 @@ class AlbumsService {
 
     const updatedAt = new Date().toISOString();
 
-    this._albums[index] = {
-      ...this._albums[index],
+    this.ALBUM[index] = {
+      ...this.ALBUM[index],
       name,
       year,
       updatedAt,
@@ -56,13 +56,13 @@ class AlbumsService {
   }
 
   deleteAlbumById(id) {
-    const index = this._albums.findIndex((album) => album.id === id);
+    const index = this.ALBUM.findIndex((album) => album.id === id);
 
     if (index === -1) {
       throw new NotFoundError('Album gagal dihapus, Id tidak ditemukan');
     }
 
-    this._albums.splice(index, 1);
+    this.ALBUM.splice(index, 1);
   }
 }
 

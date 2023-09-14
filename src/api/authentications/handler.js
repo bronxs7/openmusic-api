@@ -33,7 +33,7 @@ class AuthenticationsHandler {
     return response;
   }
 
-  async putAuthenticationHandler(request, h) {
+  async putAuthenticationHandler(request) {
     this.VALIDATOR.validatePutAuthenticationPayload(request.payload);
 
     const { refreshToken } = request.payload;
@@ -50,7 +50,7 @@ class AuthenticationsHandler {
     };
   }
 
-  async deleteAuthenticationHandler(request, h) {
+  async deleteAuthenticationHandler(request) {
     this.VALIDATOR.validateDeleteAuthenticationPayload(request.payload);
 
     const { refreshToken } = request.payload;

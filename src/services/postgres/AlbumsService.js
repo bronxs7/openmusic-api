@@ -28,6 +28,19 @@ class AlbumsService {
     return result.rows[0].id;
   }
 
+  async verifyAlbum(albumId) {
+    const query = {
+      text: 'SELECT * FROM albums WHERE id = $1',
+      values: [albumId],
+    };
+
+    const result = await this.POOL.query(query);
+
+    if (!result.rows.length) {
+      throw new NotFoundError('id album tidak ditemukan');
+    }
+  }
+
   async getAlbumById(id) {
     const query = {
       text: 'SELECT * FROM albums WHERE id = $1',

@@ -1,10 +1,11 @@
 const autoBind = require('auto-bind');
 
 class AlbumsHandler {
-  constructor(albumsService, songsService, storageService, validator) {
+  constructor(albumsService, songsService, storageService, userAlbumLikesService, validator) {
     this.ALBUMSSERVICE = albumsService;
     this.SONGSSERVICE = songsService;
     this.STORAGESERVICE = storageService;
+    this.USERALBUMLIKESSERVICE = userAlbumLikesService;
     this.VALIDATOR = validator;
 
     autoBind(this);
@@ -99,6 +100,45 @@ class AlbumsHandler {
     });
     response.code(201);
     return response;
+  }
+
+  async postAlbumLikesHandler(request, h) {
+    const { id: userId } = request.auth.credentials;
+    const { id: albumId } = request.params;
+
+    await this.USERALBUMLIKESSERVICE.addAlbumLikes(userId, albumId);
+
+    const response = h.response({
+      status: 'success',
+      message: 'Album berhasil dilike',
+    });
+    response.code(201);
+    return response;
+  }
+
+  async getAlbumLikesHandler(request) {
+    const { id: albumId } = request.params;
+
+    const totalLikes = await this.USERALBUMLIKESSERVICE.getAlbumLikes(albumId);
+    const totalInt = parseInt(totalLikes, 10);
+    return {
+      status: 'success',
+      data: {
+        likes: totalInt,
+      },
+    };
+  }
+
+  async deleteAlbumLikesHandler(request) {
+    const { id: userId } = request.auth.credentials;
+    const { id: albumId } = request.params;
+
+    await this.USERALBUMLIKESSERVICE.deleteAlbumLikes(userId, albumId);
+
+    return {
+      status: 'success',
+      message: 'Like di Album berhasil di hapus',
+    };
   }
 }
 

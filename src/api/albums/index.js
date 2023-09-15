@@ -7,11 +7,13 @@ module.exports = {
   register: async (server, {
     albumsService,
     songsService,
+    storageService,
     validator,
   }) => {
     const albumsHandler = new AlbumsHandler(
       albumsService,
       songsService,
+      storageService,
       validator,
     );
     server.route(routes(albumsHandler));

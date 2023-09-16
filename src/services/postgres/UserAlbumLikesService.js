@@ -58,7 +58,7 @@ class UserAlbumLikesService {
       const result = await this.POOL.query(query);
       const { count } = result.rows[0];
 
-      await this.CACHESERVICE.set(`likes:${albumId}`, JSON.stringify(parseInt(count, 10)));
+      await this.CACHESERVICE.set(`likes:${albumId}`, JSON.stringify(parseInt(count, 10)), 1800);
       return {
         likes: parseInt(count, 10),
       };

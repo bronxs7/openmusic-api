@@ -4,6 +4,7 @@ const Hapi = require('@hapi/hapi');
 const Jwt = require('@hapi/jwt');
 const Inert = require('@hapi/inert');
 const path = require('path');
+const config = require('./utils/config');
 
 // Albums
 const albums = require('./api/albums');
@@ -49,9 +50,13 @@ const StorageService = require('./services/storage/StorageService');
 // Album Likes
 const UserAlbumLikesService = require('./services/postgres/UserAlbumLikesService');
 
+// Cache
+const CacheService = require('./services/redis/CacheService');
+
 const ClientError = require('./exceptions/ClientError');
 
 const init = async () => {
+  const cacheService = new CacheService();
   const albumsService = new AlbumsService();
   const songsService = new SongsService();
   const usersService = new UsersService();
@@ -61,11 +66,11 @@ const init = async () => {
   const songsInPlaylistService = new SongsInPlaylistService(songsService);
   const activitiesService = new ActivitiesService();
   const storageService = new StorageService(path.resolve(__dirname, 'api/albums/file/images'));
-  const userAlbumLikesService = new UserAlbumLikesService(albumsService);
+  const userAlbumLikesService = new UserAlbumLikesService(albumsService, cacheService);
 
   const server = Hapi.server({
-    port: process.env.PORT,
-    host: process.env.NODE_ENV !== 'production' ? 'localhost' : '0.0.0.0',
+    port: config.app.port,
+    host: config.app.host !== 'production' ? 'localhost' : '0.0.0.0',
     routes: {
       cors: {
         origin: ['*'],
@@ -83,12 +88,12 @@ const init = async () => {
   ]);
 
   server.auth.strategy('openmusic_jwt', 'jwt', {
-    keys: process.env.ACCESS_TOKEN_KEY,
+    keys: config.jwt.accessTokenKey,
     verify: {
       aud: false,
       iss: false,
       sub: false,
-      maxAgeSec: process.env.ACCESS_TOKEN_AGE,
+      maxAgeSec: config.jwt.accessTokenAge,
     },
     validate: (artifacts) => ({
       isValid: true,

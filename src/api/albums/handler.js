@@ -1,4 +1,5 @@
 const autoBind = require('auto-bind');
+const config = require('../../utils/config');
 
 class AlbumsHandler {
   constructor(albumsService, songsService, storageService, userAlbumLikesService, validator) {
@@ -31,24 +32,11 @@ class AlbumsHandler {
     const { id } = request.params;
     const album = await this.ALBUMSSERVICE.getAlbumById(id);
     const songs = await this.SONGSSERVICE.getSongByAlbumId(id);
+    let url = album.cover;
 
-    if (album.cover !== null) {
-      const url = `http://${process.env.HOST}:${process.env.PORT}/albums/file/images/${album.cover}`;
-
-      return {
-        status: 'success',
-        data: {
-          album: {
-            id: album.id,
-            name: album.name,
-            year: album.year,
-            coverUrl: url,
-            songs,
-          },
-        },
-      };
+    if (album.cover) {
+      url = `http://${config.app.host}:${config.app.port}/albums/file/images/${album.cover}`;
     }
-    const url = null;
 
     return {
       status: 'success',
@@ -116,17 +104,21 @@ class AlbumsHandler {
     return response;
   }
 
-  async getAlbumLikesHandler(request) {
+  async getAlbumLikesHandler(request, h) {
     const { id: albumId } = request.params;
 
-    const totalLikes = await this.USERALBUMLIKESSERVICE.getAlbumLikes(albumId);
-    const totalInt = parseInt(totalLikes, 10);
-    return {
+    const { likes, cache } = await this.USERALBUMLIKESSERVICE.getAlbumLikes(albumId);
+    const response = h.response({
       status: 'success',
       data: {
-        likes: totalInt,
+        likes,
       },
-    };
+    });
+
+    if (cache) {
+      response.header('X-Data-Source', 'cache');
+    }
+    return response;
   }
 
   async deleteAlbumLikesHandler(request) {

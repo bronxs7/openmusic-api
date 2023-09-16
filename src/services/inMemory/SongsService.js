@@ -7,7 +7,9 @@ class SongsService {
     this._songs = [];
   }
 
-  addSong({ title, year, performer, genre, duration, albumId }) {
+  addSong({
+    title, year, performer, genre, duration, albumId,
+  }) {
     const id = nanoid(16);
     const createdAt = new Date().toISOString();
     const updatedAt = createdAt;
@@ -26,7 +28,7 @@ class SongsService {
   }
 
   getSongs() {
-    const songsArray = this._songs.map(item => {
+    const songsArray = this._songs.map((item) => {
       const container = {};
 
       container.id = item.id;
@@ -47,7 +49,9 @@ class SongsService {
     return song;
   }
 
-  editSongById(id, { title, year, genre, performer, duration, albumId }) {
+  editSongById(id, {
+    title, year, genre, performer, duration, albumId,
+  }) {
     const index = this._songs.findIndex((song) => song.id === id);
     if (index === -1) {
       throw new NotFoundError('Gagal memperbarui lagu, Id tidak ditemukan');
